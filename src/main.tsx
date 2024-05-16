@@ -12,7 +12,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ThemeProvider theme={theme}>
       <RecoilRoot>
         <GlobalStyle />
-        <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <BrowserRouter basename="/react-shopping-cart/dist">
           <App />
         </BrowserRouter>
       </RecoilRoot>
