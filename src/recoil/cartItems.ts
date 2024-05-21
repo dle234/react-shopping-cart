@@ -1,41 +1,59 @@
-import { atom, selector } from 'recoil';
-import { CartItem } from '../type';
-import { fetchCartItems } from '../api/shoppingCart';
-import { SelectedCartItems } from './selectedCardItems';
+import { atom, atomFamily, selector, selectorFamily } from 'recoil';
+import { selectedCartItemsState } from './selectedCardItems';
+import { fetchedCartItemsSelector } from './fetch';
 
-export const CartItemsSelector = selector({
-  key: 'cartItemStateSelector',
-  get: async ({ get }) => {
-    get(CartItemsState);
-    const cartItems = await fetchCartItems();
-    return cartItems;
-  },
-});
-
-export const CartItemsState = atom<CartItem[]>({
-  key: 'cartItemsState',
+export const refreshCartItemsState = atom({
+  key: 'refreshCartItemsState',
   default: [],
 });
 
-export const CartItemsCalculatorSelector = selector({
+export const cartItemQuantityAdjustSelector = selectorFamily({
+  key: `cartItemQuantityAdjust`,
+  get:
+    (id: number) =>
+    ({ get }) => {
+      const item = get(fetchedCartItemsSelector).find(
+        (cartItem) => cartItem.id === id,
+      );
+      return item ? item.quantity : 0;
+    },
+  set:
+    (id) =>
+    ({ set }, newValue) => {
+      set(cartItemQuantityState(id), newValue);
+    },
+});
+
+export const cartItemQuantityState = atomFamily({
+  key: `cartItemQuantityState`,
+  default: cartItemQuantityAdjustSelector,
+});
+
+//TODO: 여기 좀 정리하자~~~!~!~
+export const cartItemsCalculatorState = selector({
   key: 'cartItemsCalculatorSelector',
   get: async ({ get }) => {
-    const cartItems = get(CartItemsSelector);
+    const cartItems = get(fetchedCartItemsSelector);
 
     const selectedCartItems = cartItems.filter((cartItem) =>
-      get(SelectedCartItems(cartItem.id)),
+      get(selectedCartItemsState(cartItem.id)),
     );
 
     const totalCartItemQuantity = selectedCartItems.reduce(
       (totalCartItemQuantity, cartItem) => {
-        return totalCartItemQuantity + cartItem.quantity;
+        if (get(cartItemQuantityState(cartItem.id)))
+          return (
+            totalCartItemQuantity + get(cartItemQuantityState(cartItem.id))
+          );
+        return totalCartItemQuantity;
       },
       0,
     );
 
     const totalOrderAmount = selectedCartItems.reduce(
       (totalOrderAmount, cartItem) => {
-        const orderAmount = cartItem.product.price * cartItem.quantity;
+        const orderAmount =
+          cartItem.product.price * get(cartItemQuantityState(cartItem.id));
         return totalOrderAmount + orderAmount;
       },
       0,

@@ -92,8 +92,6 @@ export const ItemQuantityAdjustment = styled.div`
   gap: 0.8125rem;
 `;
 
-// export const ItemQuantityButton = styled.button``;
-
 export const ItemQuantity = styled.p`
   ${(props) => props.theme.typography.caption};
   color: ${(props) => props.theme.color.captionBlack};
