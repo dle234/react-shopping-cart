@@ -6,13 +6,11 @@ import UnCheckedBox from '../assets/UnCheckedBox.svg';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { selectedAllCartItemState } from '../../recoil/selectedCardItems';
 import { removeCartItem } from '../../api/shoppingCart';
-import {
-  fetchedCartItemsState,
-  refreshCartItemsState,
-} from '../../recoil/cartItems';
+import { refreshCartItemsState } from '../../recoil/cartItems';
+import { fetchedCartItemsSelector } from '../../recoil/fetch';
 
 const CartItemList = () => {
-  const cartItems = useRecoilValue(fetchedCartItemsState);
+  const cartItems = useRecoilValue(fetchedCartItemsSelector);
 
   const [selectedAll, setSelectedAll] = useRecoilState(
     selectedAllCartItemState,

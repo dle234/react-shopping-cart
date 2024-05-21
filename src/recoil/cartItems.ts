@@ -29,7 +29,6 @@ export const cartItemQuantityState = atomFamily({
   default: cartItemQuantityAdjustSelector,
 });
 
-//TODO: 여기 좀 정리하자~~~!~!~
 export const cartItemsCalculatorState = selector({
   key: 'cartItemsCalculatorSelector',
   get: async ({ get }) => {
